@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(CMakeSFMLProject LANGUAGES CXX)
+project(Civ-LXVDXXXV LANGUAGES CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -12,6 +12,41 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(main src/main.cpp)
-target_compile_features(main PRIVATE cxx_std_17)
+include_directories(
+    modules/
+    modules/imgui
+    modules/imgui-sfml
+    modules/implot
+)
+
+
+
+set(IMGUI_SRC
+    modules/imgui/imgui.cpp
+    modules/imgui/imgui_widgets.cpp
+    modules/imgui/imgui_draw.cpp
+    modules/imgui/imgui_tables.cpp
+
+    modules/imgui/imgui_demo.cpp
+)
+
+set(IMGUI_SFML_SRC
+    modules/imgui-sfml/imgui-SFML.cpp
+)
+
+set(IMPLOT_SRC
+    modules/implot/implot.cpp
+    modules/implot/implot_items.cpp
+    modules/implot/implot_demo.cpp
+)
+
+add_executable(main
+    ${IMGUI_SRC}
+    ${IMGUI_SFML_SRC}
+    ${IMPLOT_SRC}
+
+    src/main.cpp
+)
+
+target_compile_features(main PRIVATE cxx_std_20)
 target_link_libraries(main PRIVATE SFML::Graphics)
