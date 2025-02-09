@@ -1,0 +1,24 @@
+diff --git a/imconfig.h b/imconfig.h
+index 8f8bc3b..e45d6cd 100644
+--- a/imconfig.h
++++ b/imconfig.h
+@@ -56,8 +56,8 @@
+ 
+ //---- Include imgui_user.h at the end of imgui.h as a convenience
+ // May be convenient for some users to only explicitly include vanilla imgui.h and have extra stuff included.
+-//#define IMGUI_INCLUDE_IMGUI_USER_H
+-//#define IMGUI_USER_H_FILENAME         "my_folder/my_imgui_user.h"
++#define IMGUI_INCLUDE_IMGUI_USER_H
++#define IMGUI_USER_H_FILENAME         "imgui-SFML.h"
+ 
+ //---- Pack vertex colors as BGRA8 instead of RGBA8 (to avoid converting from one to another). Need dedicated backend support.
+ //#define IMGUI_USE_BGRA_PACKED_COLOR
+@@ -117,7 +117,7 @@
+ // Your renderer backend will need to support it (most example renderer backends support both 16/32-bit indices).
+ // Another way to allow large meshes while keeping 16-bit indices is to handle ImDrawCmd::VtxOffset in your renderer.
+ // Read about ImGuiBackendFlags_RendererHasVtxOffset for details.
+-//#define ImDrawIdx unsigned int
++#define ImDrawIdx unsigned int
+ 
+ //---- Override ImDrawCallback signature (will need to modify renderer backends accordingly)
+ //struct ImDrawList;
