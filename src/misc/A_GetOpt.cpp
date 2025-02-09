@@ -5,6 +5,7 @@
 #include <cassert>
 
 
+static constexpr bool logFlag = true;
 
 
 misc::A_GetOpt::UnknowOpt::UnknowOpt(Opt const & found, int ac, char const * const * av)
@@ -18,7 +19,7 @@ misc::A_GetOpt::UnknowOpt::UnknowOpt(Opt const & found, int ac, char const * con
         m_msg += found.short_form;
     else
         m_msg += found.long_form;
-    m_msg = "'";
+    m_msg += "'";
 }
 
 misc::A_GetOpt::Opt const & misc::A_GetOpt::UnknowOpt::found() const
@@ -81,14 +82,14 @@ void misc::A_GetOpt::parse(int ac, char const * const * av)
         std::string short_form, long_form, long_form_param;
         bool param = is_param(short_form, long_form, long_form_param);
 
-        CLOG << "Parsing '" << current_av() << "'";
+        CLOG(logFlag) << "Parsing '" << current_av() << "'";
 
         if (param == false)
         {
             #ifndef NDEBUG
                 int m_ac_dbg_counter = m_current_ac;
             #endif
-            CLOG << "Not a option '" << current_av() << "'";
+            CLOG(logFlag) << "Not a option '" << current_av() << "'";
             on_no_opt();
             assert(m_ac_dbg_counter < m_current_ac); // on_no_opt() must advance m_current_ac
         }
@@ -192,13 +193,13 @@ void misc::A_GetOpt::current_ac(int v)
 
 void misc::A_GetOpt::parse_long_form(std::string const & long_form, std::string const & long_form_param)
 {
-    CLOG << "Long Form found '" << long_form << "' with param '" << long_form_param << "'";
+    CLOG(logFlag) << "Long Form found '" << long_form << "' with param '" << long_form_param << "'";
     bool found = false;
     for (auto it = m_opt_list.cbegin(); it != m_opt_list.cend(); ++it)
     {
         if (long_form == it->long_form)
         {
-            CLOG << "OPT found '" << it->short_form << "' - '" << it->long_form << "'";
+            CLOG(logFlag) << "OPT found '" << it->short_form << "' - '" << it->long_form << "'";
             #ifndef NDEBUG
                 int m_ac_dbg_counter = m_current_ac;
             #endif
@@ -219,12 +220,12 @@ void misc::A_GetOpt::parse_short_form(std::string const & short_form)
     for (std::size_t i = 0; i < short_form.size(); ++i)
     {
         bool found = false;
-        CLOG << "Short Form found '" << short_form[i] << "'";
+        CLOG(logFlag) << "Short Form found '" << short_form[i] << "'";
         for (auto it = m_opt_list.cbegin(); it != m_opt_list.cend(); ++it)
         {
             if (short_form[i] == it->short_form)
             {
-                CLOG << "OPT found '" << it->short_form << "' - '" << it->long_form << "'";
+                CLOG(logFlag) << "OPT found '" << it->short_form << "' - '" << it->long_form << "'";
                 #ifndef NDEBUG
                     int m_ac_dbg_counter = m_current_ac;
                 #endif
@@ -237,4 +238,41 @@ void misc::A_GetOpt::parse_short_form(std::string const & short_form)
         if (found == false)
             throw UnknowOpt(Opt{.short_form=short_form[i], .long_form = ""}, m_ac, m_av);
     }
+}
+
+
+
+
+static bool is_space(char c)
+{
+    return (c == ' ' || c == '\t');
+}
+
+misc::opt_toto misc::to_opt_string(std::string const & str)
+{
+    misc::opt_toto result;
+    std::string tmp;
+
+    for (unsigned int i = 0; i < str.size(); ++i)
+    {
+        if (is_space(str[i]))
+        {
+            if (tmp.empty() == false)
+            {
+                result.data.emplace_back(std::move(tmp));
+                tmp.clear();
+            }
+        }
+        else
+            tmp += str[i];
+    }
+    if (tmp.empty() == false)
+        result.data.emplace_back(std::move(tmp));
+
+    result.ac = result.data.size();
+    result.av.reserve(result.ac);
+    for (unsigned int i = 0; i < result.data.size(); ++i)
+        result.av.emplace_back(result.data[i].c_str());
+
+    return (result);
 }

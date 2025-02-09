@@ -8,8 +8,8 @@
 #include <mutex>
 
 
-#define CLOG          misc::civlog::Entry()
-#define CLOGS(stream) misc::civlog::Entry(stream)
+#define CLOG(will_log)          misc::civlog::EntryFactory<will_log>::log()
+#define CLOGS(will_log, stream) misc::civlog::EntryFactory<will_log>::log(stream)
 
 
 namespace misc
@@ -99,6 +99,43 @@ private:
     Output *             m_output;
 
     friend class Output;
+};
+
+
+
+class NoEntry
+{
+public:
+    NoEntry(NoEntry const &)             = delete;
+    NoEntry & operator=(NoEntry const &) = delete;
+
+    NoEntry(NoEntry &&);
+    NoEntry & operator=(NoEntry &&);
+
+    NoEntry(Output & = cout, std::source_location = std::source_location::current()) {}
+    ~NoEntry() = default;
+
+    template <class T> NoEntry & operator<<(T const &) { return (*this); }
+};
+
+
+
+template <bool WILL_LOG>
+struct EntryFactory
+{
+    static Entry log(Output & output = cout, std::source_location src = std::source_location::current())
+    {
+        return (Entry(output, src));
+    }
+};
+
+template <>
+struct EntryFactory<false>
+{
+    static NoEntry log(Output & = cout, std::source_location = std::source_location::current())
+    {
+        return (NoEntry());
+    }
 };
 
 

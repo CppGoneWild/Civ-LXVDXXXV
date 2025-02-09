@@ -73,5 +73,15 @@ private:
 };
 
 
+
+struct opt_toto
+{
+    int ac;
+    std::vector<char const *> av;
+    std::vector<std::string> data;
+};
+
+opt_toto to_opt_string(std::string const &);
+
 } // namespace misc
 

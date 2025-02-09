@@ -3,13 +3,14 @@
 
 #include <iostream>
 
+#define LOGFLAG true
 
 int main()
 {
     using misc::TermStyle;
 
-    CLOG << "Test";
-    CLOG << (TermStyle::fg::Red) << "Test";
-    CLOG << std::hex << std::showbase << 99;
+    CLOG(LOGFLAG) << "Test";
+    CLOG(LOGFLAG) << (TermStyle::fg::Red) << "Test";
+    CLOG(LOGFLAG) << std::hex << std::showbase << 99;
     return (0);
 }
